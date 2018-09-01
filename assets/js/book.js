@@ -5,15 +5,12 @@ function Book(title, author, isbn) {
     this.isbn = isbn;
 }
 
-
-
 //UI Constructor
 function UI() { }
 
 //Add book to list
 UI.prototype.addBookToList = function (book) {
     const list = document.getElementById('book-list');
-
     //Create tr element
     const row = document.createElement('tr');
     //Insert cols
@@ -25,15 +22,35 @@ UI.prototype.addBookToList = function (book) {
     `;
     //Append row to booklist
     list.appendChild(row);
-
-    //Clear input
-    UI.prototype.clearFields = function () {
-        document.getElementById('title').value = '';
-        document.getElementById('author').value = '';
-        document.getElementById('isbn').value = '';
-    }
-
 }
+
+//Show Alert
+UI.prototype.showAlert = function (message, className) {
+    //Create div
+    const div = document.createElement('div');
+    //Add classes
+    div.className = `alert ${className}`;
+    //Add text
+    div.appendChild(document.createTextNode(message));
+    //Get parent
+    const container = document.querySelector('.container');
+    //Get form
+    const form = document.querySelector('#book-form');
+    //Insert alert
+    container.insertBefore(div, form);
+    //Timeout after 3 seconds
+    setTimeout(function () {
+        document.querySelector('.alert').remove();
+    }, 3000);
+}
+//Clear input
+UI.prototype.clearFields = function () {
+    document.getElementById('title').value = '';
+    document.getElementById('author').value = '';
+    document.getElementById('isbn').value = '';
+}
+
+
 
 //Event Listeners
 document.getElementById('book-form').addEventListener('submit',
@@ -49,11 +66,24 @@ document.getElementById('book-form').addEventListener('submit',
         //Instantiate UI
         const ui = new UI();
 
-        //Add book to list
-        ui.addBookToList(book);
+        //Validate
+        if (title === '' || author === '' || isbn === '') {
+            //Error Alert
+            ui.showAlert('Please fill in all fields', 'error');
+        } else {
+            //Add book to list
+            ui.addBookToList(book);
 
-        //Clear Fields
-        ui.clearFields();
+            //Success
+            ui.showAlert('Book Added!', 'success');
+
+            //Clear Fields
+            ui.clearFields();
+
+        }
 
         e.preventDefault();
     });
+
+
+
